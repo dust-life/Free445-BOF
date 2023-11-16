@@ -3,9 +3,7 @@ Code from https://github.com/DrJWCain/VFS/blob/master/Free445/Free445/Free445.cp
 
 ## Compile
 
-```
-cl.exe /c /GS- Free445.cpp /FoFree445.o /D "UNICODE"
-```
+Please use [Actions](https://github.com/dust-life/Free445-BOF/actions)
 
 ## Usage
 ```
