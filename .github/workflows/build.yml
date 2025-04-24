@@ -5,29 +5,44 @@ name: Build
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v1
+      
       - name: Configure build for x86
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: amd64_x86
+      
       - name: build x86
         run: cl.exe /c /GS- Free445.cpp /FoFree445.x86.o /D "UNICODE"
+      
       - name: Configure build for amd64
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: amd64
+      
       - name: build x64
         run: cl.exe /c /GS- Free445.cpp /FoFree445.x64.o /D "UNICODE"
+      
       - name: Removes debug symbols from a beacon object file
         run: powershell -ExecutionPolicy Unrestricted -command "& { import-module .\strip_bof.ps1; strip-bof -Path Free445.x86.o; strip-bof -Path Free445.x64.o}"
+      
       - name: move
         run: |
           mkdir release
           move Free445*.o .\release
+          
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Free445-${{ github.sha }}
-          path: .\release
-        
+          path: ./release/*
+      
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Free445-BOF v1.0.0
+          files: ./release/*
